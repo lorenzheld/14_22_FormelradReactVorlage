@@ -8,8 +8,9 @@ export default function Formelrad() {
         u: 10,
         i: 2,
         r: "",
-        p: ""
-    })
+        p: "",
+        message: ""
+    });
 
     const [colors, setColors] = useState({
         u: "black",
@@ -17,64 +18,93 @@ export default function Formelrad() {
         r: "black",
         p: "black",
         message: "red"
-    })
+    });
 
-    function resetColors(){
-        setColors( colors=> ({...colors, u:"black", i:"black", r:"black", p:"black"}));
+    function resetColors() {
+        setColors(c => ({ ...c, u: "black", i: "black", r: "black", p: "black" }));
     }
 
-    const handleSubmit = (event) => {
+    const handleClear = event => {
         event.preventDefault();
-        console.log("handleSubmit")
+        setValues({ u: "", i: "", r: "", p: "", message: "" });
         resetColors();
+    };
+
+    const handleSubmit = event => {
+        event.preventDefault();
+        resetColors();
+
         if (values.u === "" && values.i === "") {
-            /*calculate u and i */
-            setValues(values => ({...values, u: Math.sqrt(values.p * values.r)}));
-            setValues(values => ({...values, i: Math.sqrt(values.p / values.r)}));
-            setColors( colors=> ({...colors, u:"red", i:"red"}));
+            setValues(v => ({ ...v, u: Math.sqrt(v.p * v.r) }));
+            setValues(v => ({ ...v, i: Math.sqrt(v.p / v.r) }));
+            setColors(c => ({ ...c, u: "red", i: "red" }));
+            setValues(v => ({ ...v, message: "Spannung und Stromstärke berechnet" }));
         } else if (values.u === "" && values.r === "") {
-            /*calculate u and r */
-            setValues(values => ({...values, u: values.p / values.i}));
-            setValues(values => ({...values, r: values.p / values.i / values.i}));
-            setColors( colors=> ({...colors, u:"red", r:"red"}));
+            setValues(v => ({ ...v, u: v.p / v.i }));
+            setValues(v => ({ ...v, r: v.p / (v.i * v.i) }));
+            setColors(c => ({ ...c, u: "red", r: "red" }));
+            setValues(v => ({ ...v, message: "Spannung und Widerstand berechnet" }));
         } else if (values.u === "" && values.p === "") {
-            /*calculate u and p */
-            setValues(values => ({...values, u: values.i * values.r}));
-            setValues(values => ({...values, p: values.i * values.i * values.r}));
-            setColors( colors=> ({...colors, u:"red", p:"red"}));
+            setValues(v => ({ ...v, u: v.i * v.r }));
+            setValues(v => ({ ...v, p: v.i * v.i * v.r }));
+            setColors(c => ({ ...c, u: "red", p: "red" }));
+            setValues(v => ({ ...v, message: "Spannung und Leistung berechnet" }));
         } else if (values.i === "" && values.r === "") {
-            /*calculate i and r */
-            setValues(values => ({...values, i: values.p / values.u}));
-            setValues(values => ({...values, r: values.u * values.u / values.p}));
-            setColors( colors=> ({...colors, i:"red", r:"red"}));
+            setValues(v => ({ ...v, i: v.p / v.u }));
+            setValues(v => ({ ...v, r: (v.u * v.u) / v.p }));
+            setColors(c => ({ ...c, i: "red", r: "red" }));
+            setValues(v => ({ ...v, message: "Stromstärke und Widerstand berechnet" }));
         } else if (values.i === "" && values.p === "") {
-            /*calculate i and p */
-            setValues(values => ({...values, i: values.u / values.r}));
-            setValues(values => ({...values, p: values.u * values.u / values.r}));
-            setColors( colors=> ({...colors, i:"red", p:"red"}));
+            setValues(v => ({ ...v, i: v.u / v.r }));
+            setValues(v => ({ ...v, p: (v.u * v.u) / v.r }));
+            setColors(c => ({ ...c, i: "red", p: "red" }));
+            setValues(v => ({ ...v, message: "Stromstärke und Leistung berechnet" }));
         } else {
-            /*calculate r and p */
-            setValues(values => ({...values, r: values.u / values.i}));
-            setValues(values => ({...values, p: values.u * values.i}));
-            setColors( colors=> ({...colors, r:"red", p:"red"}));
+            setValues(v => ({ ...v, r: v.u / v.i }));
+            setValues(v => ({ ...v, p: v.u * v.i }));
+            setColors(c => ({ ...c, r: "red", p: "red" }));
+            setValues(v => ({ ...v, message: "Widerstand und Leistung berechnet" }));
         }
-    }
+    };
 
     return (
         <>
             <section>
                 <header>
                     <h2>Formelrad</h2>
-                    <img src={formelrad} width="200" alt="Formelrad"/>
+                    <img src={formelrad} width="200" alt="Formelrad" />
+                    <p>Zwei Werte eingeben, die anderen werden berechnet.</p>
                 </header>
                 <form onSubmit={handleSubmit}>
-                    <InputField color={colors.u} value={values.u} label="Spannung" handleChange={e => {setValues(values => ({...values, u: e.target.value}))}} />
-                    <InputField color={colors.i} value={values.i} label="Stromstärke" handleChange={e => {setValues(values => ({...values, i: e.target.value}))}} />
-                    <InputField color={colors.r} value={values.r} label="Widerstand" handleChange={e => {setValues(values => ({...values, r: e.target.value}))}} />
-                    <InputField color={colors.p} value={values.p} label="Leistung" handleChange={e => {setValues(values => ({...values, p: e.target.value}))}} />
+                    <InputField
+                        color={colors.u}
+                        value={values.u}
+                        label="Spannung"
+                        handleChange={e => setValues(v => ({ ...v, u: e.target.value }))}
+                    />
+                    <InputField
+                        color={colors.i}
+                        value={values.i}
+                        label="Stromstärke"
+                        handleChange={e => setValues(v => ({ ...v, i: e.target.value }))}
+                    />
+                    <InputField
+                        color={colors.r}
+                        value={values.r}
+                        label="Widerstand"
+                        handleChange={e => setValues(v => ({ ...v, r: e.target.value }))}
+                    />
+                    <InputField
+                        color={colors.p}
+                        value={values.p}
+                        label="Leistung"
+                        handleChange={e => setValues(v => ({ ...v, p: e.target.value }))}
+                    />
                     <button type="submit">Calculate</button>
+                    <button style={{ margin: 10 }} onClick={handleClear}>Clear</button>
+                    <p style={{ color: colors.message }}>{values.message}</p>
                 </form>
             </section>
         </>
-    )
+    );
 }
